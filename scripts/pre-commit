@@ -37,7 +37,7 @@ fi
 # Run gitleaks
 echo "Running gitleaks pre-commit scan..."
 
-if ! "$GITLEAKS_BIN" protect --staged --redact --no-banner; then
+if ! "$GITLEAKS_BIN" protect --staged --redact --no-banner --verbose; then
   echo "-----"
   echo "Commit blocked: secrets detected by gitleaks"
   echo "Remove secrets or disable hook:"
