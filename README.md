@@ -1,23 +1,26 @@
-# Gitleaks Pre-Commit Hook
+# Gitleaks Pre-Commit Hook for Telegram token
 
-This Git pre-commit hook automatically scans staged files for secrets using [Gitleaks](https://github.com/gitleaks/gitleaks). It works on **Linux** and **macOS** and automatically installs the latest version of Gitleaks if missing.
+This Git pre-commit hook automatically scans staged files for secrets (including Telegram token) using [Gitleaks](https://github.com/gitleaks/gitleaks). It works on **Linux** and **macOS** and automatically installs the latest version of Gitleaks if missing.
 
 ## Features
 
 - Automatically fetches the **latest Gitleaks version**
 - Scans **staged files** only
 - Blocks commits if secrets are detected
-- Optionally disables the hook via Git config
+- Auto enable gitleaks.enable true Git config
+- Scans Telegram token if ```.gitleaks.toml``` correctly setuped
 
 ## Installation
 
-1. Place the `pre-commit` script from ```/scripts/pre-commit``` in your repository:
-
+1. Place the `pre-commit` script from ```/scripts/pre-commit``` and ```.gitleaks.toml``` to repo root in your repository:
+```bash
+.gitleaks.toml
+```
 ```bash
 .git/hooks/pre-commit
 ```
 2. Make it executable:
-```
+```bash
 chmod +x .git/hooks/pre-commit
 ```
 3. Hook via Git will be configured by 
@@ -29,7 +32,7 @@ How It Works
 * If secrets are found, the commit is blocked and a message is displayed.
 
 Without findings:
-```
+```bash
 $ git commit -am 'Simple pre-commit script' 
 Running gitleaks pre-commit scan...
 2:11PM INF 0 commits scanned.
@@ -42,22 +45,22 @@ No secrets detected
 ```
 
 With finding:
-```
-$ echo TEST_API_KEY = "SOME_API_KEY" > test
-$ git add test
-$ git commit -am 'test'
+```bash
+$ echo "TELE_TOKEN=123456789:ABCDEF1234567890abcdefABCDEF12345" > test_secret.txt
+$ git add test_secret.txt
+$ git commit -m "test telegram leak"
 Running gitleaks pre-commit scan...
-Finding:     TEST_API_KEY = REDACTED
+Finding:     REDACTED
 Secret:      REDACTED
-RuleID:      generic-api-key
-Entropy:     4.316828
-File:        test
+RuleID:      telegram-bot-token
+Entropy:     4.729257
+File:        test_secret.txt
 Line:        1
-Fingerprint: test:generic-api-key:1
+Fingerprint: test_secret.txt:telegram-bot-token:1
 
-2:41PM INF 0 commits scanned.
-2:41PM INF scanned ~39 bytes (39 bytes) in 161ms
-2:41PM WRN leaks found: 1
+3:04PM INF 0 commits scanned.
+3:04PM INF scanned ~55 bytes (55 bytes) in 2.86ms
+3:04PM WRN leaks found: 1
 -----
 Commit blocked: secrets detected by gitleaks
 Remove secrets or disable hook:
@@ -68,4 +71,3 @@ git config gitleaks.enable false
 Notes:
 * Only works for Linux and macOS.
 * For Windows, manual installation of Gitleaks is required.
-* The hook respects Git config gitleaks.enable
