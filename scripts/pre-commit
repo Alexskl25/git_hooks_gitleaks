@@ -6,6 +6,8 @@ set -e
 # Config
 VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 GITLEAKS_BIN="${GITLEAKS_BIN:-/usr/local/bin/gitleaks}"
+GITLEAKS_CONFIG="${GITLEAKS_CONFIG:-.gitleaks.toml}"
+
 
 # Detect OS/ARCH
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -37,7 +39,7 @@ fi
 # Run gitleaks
 echo "Running gitleaks pre-commit scan..."
 
-if ! "$GITLEAKS_BIN" protect --staged --redact --no-banner --verbose; then
+if ! "$GITLEAKS_BIN" protect --staged --config "$GITLEAKS_CONFIG" --redact --no-banner --verbose; then
   echo "-----"
   echo "Commit blocked: secrets detected by gitleaks"
   echo "Remove secrets or disable hook:"

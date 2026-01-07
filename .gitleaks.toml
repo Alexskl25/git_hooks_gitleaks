@@ -1,7 +1,7 @@
 title = "Custom Telegram Scan"
 
 [[rules]]
-    id = "telegram-bot-token"
-    description = "Detected a Telegram Bot Token assigned to TELE_TOKEN"
-    regex = '''TELE_TOKEN=[0-9]{10}:[a-zA-Z0-9_-]{35}'''
-    keywords = ["TELE_TOKEN"]
+id = "telegram-bot-token"
+description = "Detected Telegram Bot Token"
+regex = '''TELE_TOKEN=[0-9]{6,12}:[a-zA-Z0-9_-]{30,}'''
+keywords = ["TELE_TOKEN"]
